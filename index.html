@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>عيد ميلاد سعيد سمية ❤️ | Happy Birthday Soumia</title>
+    <style>
+        /* ==========================================================================
+           1. الإعدادات العامة والمتغيرات الأساسية
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        :root {
+            --bg-dark: #070204;
+            --burgundy: #4a0404;
+            --deep-red: #8b0000;
+            --accent-red: #ff1a40;
+            --gold: #f3e5ab;
+            --gold-bright: #ffd700;
+            --white: #ffffff;
+            --text-shadow: 0 0 10px rgba(255, 26, 64, 0.7);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--white);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* ==========================================================================
+           2. العناصر الخلفية المتحركة (نجوم، بتلات، إضاءة، ألعاب نارية)
+           ========================================================================== */
+        #canvas-stars, #canvas-fireworks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #canvas-fireworks {
+            z-index: 5;
+        }
+
+        /* القمر السينمائي */
+        .moon {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #ffffff, #e6e6e6 50%, #ccc 100%);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.3);
+            z-index: 2;
+            opacity: 0.85;
+            transition: all 1s ease;
+        }
+
+        /* الضباب السينمائي والإضاءة المحيطية */
+        .ambient-light {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140vw;
+            height: 140vh;
+            background: radial-gradient(circle, rgba(139, 0, 0, 0.25) 0%, rgba(74, 4, 4, 0.15) 50%, rgba(7, 2, 4, 0.95) 100%);
+            pointer-events: none;
+            z-index: 2;
+            animation: pulseGlow 8s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.95); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        /* بتلات الورد المتساقطة */
+        .petal {
+            position: absolute;
+            background: linear-gradient(135deg, #ff1a40, #8b0000);
+            border-radius: 15px 0 15px 0;
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 4;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            10% { opacity: 0.9; }
+            100% {
+                transform: translateY(110vh) rotate(720deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* ==========================================================================
+           3. إعدادات المشاهد والانتقالات السينمائية
+           ========================================================================== */
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            transform: scale(0.92);
+        }
+
+        .scene.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        /* ==========================================================================
+           4. شاشة البداية (Start Screen)
+           ========================================================================== */
+        #scene-start {
+            z-index: 50;
+        }
+
+        .title-glow {
+            font-size: 2.2rem;
+            color: var(--gold);
+            text-shadow: 0 0 15px rgba(243, 229, 171, 0.6), 0 0 30px rgba(255, 26, 64, 0.8);
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .heart-btn-wrapper {
+            position: relative;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        .heart-btn-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            animation: rotateFrame 12s linear infinite;
+            box-shadow: 0 0 20px rgba(243, 229, 171, 0.3);
+        }
+
+        @keyframes rotateFrame {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pulsing-heart-btn {
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, var(--accent-red), var(--deep-red));
+            transform: rotate(-45deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 30px rgba(255, 26, 64, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.5);
+            animation: heartPulse 1.4s infinite alternate ease-in-out;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .pulsing-heart-btn::before,
+        .pulsing-heart-btn::after {
+            content: '';
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, var(--accent-red), var(--deep-red));
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .pulsing-heart-btn::before {
+            top: -65px;
+            left: 0;
+        }
+
+        .pulsing-heart-btn::after {
+            left: 65px;
+            top: 0;
+        }
+
+        .btn-text {
+            position: relative;
+            z-index: 2;
+            transform: rotate(45deg);
+            color: var(--white);
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            white-space: nowrap;
+        }
+
+        @keyframes heartPulse {
+            0% { transform: rotate(-45deg) scale(0.95); box-shadow: 0 0 20px rgba(255, 26, 64, 0.6); }
+            100% { transform: rotate(-45deg) scale(1.1); box-shadow: 0 0 45px rgba(255, 26, 64, 1); }
+        }
+
+        /* ==========================================================================
+           5. المشهد الثاني: العد التنازلي السينمائي
+           ========================================================================== */
+        .countdown-number {
+            font-size: 8rem;
+            font-weight: 900;
+            color: var(--white);
+            text-shadow: 0 0 20px var(--accent-red), 0 0 50px var(--accent-red), 0 0 80px var(--gold);
+            animation: zoomCinematic 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes zoomCinematic {
+            0% { transform: scale(0.2); opacity: 0; filter: blur(10px); }
+            30% { opacity: 1; filter: blur(0px); }
+            80% { transform: scale(1.2); opacity: 0.9; }
+            100% { transform: scale(1.5); opacity: 0; filter: blur(5px); }
+        }
+
+        /* ==========================================================================
+           6. المشهد الثالث والخامس: تشكّل القلب والجزيئات
+           ========================================================================== */
+        #heart-particles-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .particle-word {
+            position: absolute;
+            color: var(--accent-red);
+            font-size: 0.75rem;
+            font-weight: bold;
+            opacity: 0;
+            transition: all 1.5s ease-out;
+            text-shadow: 0 0 5px var(--accent-red);
+        }
+
+        .revealed-text {
+            margin-top: 25px;
+            font-size: 1.8rem;
+            color: var(--gold);
+            text-shadow: var(--text-shadow);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease;
+        }
+
+        .revealed-text.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ==========================================================================
+           7. المشهد السادس: الورود الحمراء والافتتاحية
+           ========================================================================== */
+        .rose-garden {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .rose {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            background: var(--accent-red);
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg) scale(0);
+            box-shadow: inset 0 0 10px #000, 0 0 15px var(--accent-red);
+            transition: transform 2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .rose.bloom {
+            transform: rotate(-45deg) scale(1);
+        }
+
+        .rose::before {
+            content: '';
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            background: var(--deep-red);
+            border-radius: 50%;
+            top: 7px;
+            left: 7px;
+        }
+
+        /* ==========================================================================
+           8. المشهد السابع: كعكة عيد الميلاد (CSS 3D 3-Layers)
+           ========================================================================== */
+        .cake-container {
+            position: relative;
+            width: 220px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .cake-layer {
+            border-radius: 12px;
+            box-shadow: inset 0 5px 10px rgba(255,255,255,0.3), 0 8px 15px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .layer-bottom {
+            width: 200px;
+            height: 55px;
+            background: linear-gradient(to right, #3a0007, #8b0000, #3a0007);
+        }
+
+        .layer-middle {
+            width: 150px;
+            height: 45px;
+            background: linear-gradient(to right, #5c000e, #ab0019, #5c000e);
+        }
+
+        .layer-top {
+            width: 100px;
+            height: 38px;
+            background: linear-gradient(to right, #8b0000, #ff1a40, #8b0000);
+        }
+
+        .cake-topping {
+            position: absolute;
+            top: -10px;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: var(--gold);
+            border-radius: 10px;
+        }
+
+        .candles-group {
+            position: absolute;
+            top: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .candle {
+            width: 8px;
+            height: 30px;
+            background: linear-gradient(to bottom, #fff, var(--gold));
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .flame {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 14px;
+            background: radial-gradient(circle, #ffee55 0%, #ff5500 100%);
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 10px #ffee55, 0 0 20px #ff5500;
+            animation: flameFlicker 0.6s infinite alternate;
+        }
+
+        @keyframes flameFlicker {
+            0% { transform: translateX(-50%) scale(0.9) rotate(-2deg); }
+            100% { transform: translateX(-50%) scale(1.1) rotate(2deg); }
+        }
+
+        .age-badge {
+            position: absolute;
+            top: -20px;
+            background: var(--gold);
+            color: #000;
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px var(--gold);
+        }
+
+        /* ==========================================================================
+           9. المشهد التاسع: الاعتذار والرسائل النصية
+           ========================================================================== */
+        .apology-card {
+            background: rgba(20, 5, 10, 0.75);
+            border: 1px solid rgba(243, 229, 171, 0.4);
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 90%;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(255, 26, 64, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .typed-text {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #fce4ec;
+            min-height: 100px;
+            text-align: right;
+        }
+
+        .quote-text {
+            font-size: 1.5rem;
+            color: var(--gold);
+            text-shadow: 0 0 10px rgba(243, 229, 171, 0.5);
+            line-height: 1.6;
+            max-width: 85%;
+        }
+
+        /* ==========================================================================
+           10. مشغل الموسيقى (Audio Player)
+           ========================================================================== */
+        .audio-player-container {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            z-index: 100;
+            background: rgba(10, 2, 5, 0.85);
+            border: 1px solid rgba(243, 229, 171, 0.3);
+            border-radius: 30px;
+            padding: 6px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .audio-btn {
+            background: none;
+            border: none;
+            color: var(--gold);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .audio-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .volume-slider {
+            width: 60px;
+            accent-color: var(--accent-red);
+            cursor: pointer;
+        }
+
+        .audio-status {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.8);
+            max-width: 90px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .audio-alert {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(139, 0, 0, 0.9);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            z-index: 101;
+            display: none;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            border: 1px solid var(--gold);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .title-glow { font-size: 1.7rem; }
+            .quote-text { font-size: 1.2rem; }
+            .countdown-number { font-size: 6rem; }
+            .typed-text { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الإضاءة والخلفية السينمائية -->
+    <div class="ambient-light"></div>
+    <div class="moon"></div>
+    <canvas id="canvas-stars"></canvas>
+    <canvas id="canvas-fireworks"></canvas>
+
+    <!-- تنبيه الموسيقى -->
+    <div id="audio-alert" class="audio-alert">لم يتم العثور على ملف الموسيقى الخارجي 🎵</div>
+
+    <!-- مشغل الموسيقى -->
+    <div class="audio-player-container">
+        <button id="play-pause-btn" class="audio-btn" title="تشغيل/إيقاف">▶</button>
+        <span id="audio-status" class="audio-status">جاهز</span>
+        <input type="range" id="volume-slider" class="volume-slider" min="0" max="1" step="0.1" value="0.8">
+    </div>
+
+    <!-- الصوت الخارجي المطلوب -->
+    <audio id="bg-music" preload="auto">
+        <source src="TAGNE × MANAL - MAAK ( LYRICS - كلمات ).m4a" type="audio/mp4">
+        <source src="TAGNE × MANAL - MAAK ( LYRICS - كلمات ).m4a" type="audio/aac">
+    </audio>
+
+    <!-- ==========================================================================
+       المشاهد (SCENES)
+       ========================================================================== -->
+
+    <!-- شاشة البداية -->
+    <section id="scene-start" class="scene active">
+        <h1 class="title-glow">Soumia ❤️</h1>
+        <div class="heart-btn-wrapper" onclick="startCinematicShow()">
+            <div class="heart-btn-frame"></div>
+            <button class="pulsing-heart-btn" aria-label="ابدأ العرض">
+                <span class="btn-text">اضغطي هنا ❤️</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- المشهد الثاني: العد التنازلي -->
+    <section id="scene-countdown" class="scene">
+        <div id="countdown-display" class="countdown-number">3</div>
+    </section>
+
+    <!-- المشهد الثالث: تكوّن القلب -->
+    <section id="scene-heart-birth" class="scene">
+        <div id="heart-particles-container"></div>
+        <div id="heart-birth-text" class="revealed-text">
+            <h2>Soumia ❤️</h2>
+            <p style="font-size: 1.2rem; color: #fff; margin-top: 5px;">Happy Birthday</p>
+        </div>
+    </section>
+
+    <!-- المشهد الرابع: سماء العشاق -->
+    <section id="scene-lovers-sky" class="scene">
+        <p class="quote-text">«سمية، ربما تفصلنا المسافات، لكنك قريبة من قلبي دائمًا ❤️»</p>
+    </section>
+
+    <!-- المشهد الخامس: رسالة الحب (I LOVE YOU) -->
+    <section id="scene-love-message" class="scene">
+        <div style="transform: scale(1.2); margin-bottom: 20px;">
+            <div class="pulsing-heart-btn" style="animation-duration: 0.8s;">
+                <span class="btn-text" style="font-size: 0.9rem;">I LOVE YOU</span>
+            </div>
+        </div>
+        <h2 class="title-glow" style="margin-top: 40px;">Soumia ❤️</h2>
+        <p class="quote-text" style="font-size: 1.2rem;">«أنتِ مميزة، وأتمنى أن تبقى ابتسامتك أجمل شيء في أيامك.»</p>
+    </section>
+
+    <!-- المشهد السادس: حديقة الورود -->
+    <section id="scene-rose-garden" class="scene">
+        <div class="rose-garden">
+            <div class="rose"></div>
+            <div class="rose"></div>
+            <div class="rose"></div>
+        </div>
+        <p class="quote-text">«أتمنى أن تبقى ابتسامتك أكثر إشراقًا من النجوم ✨»</p>
+    </section>
+
+    <!-- المشهد السابع: كعكة عيد الميلاد -->
+    <section id="scene-cake" class="scene">
+        <div class="cake-container">
+            <div class="age-badge">17</div>
+            <div class="candles-group">
+                <div class="candle"><div class="flame"></div></div>
